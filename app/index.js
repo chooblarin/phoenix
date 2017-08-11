@@ -1,4 +1,5 @@
 import 'pixi.js'
+import Stats from 'stats.js'
 
 import Particle from './graphic/Particle'
 import styles from './styles/main.css'
@@ -35,10 +36,16 @@ const updateSparks = () => {
   sparks.length = j
 }
 
+const stats = new Stats()
+stats.showPanel(0)
+document.body.appendChild(stats.dom)
+
 const loop = () => {
-  requestAnimationFrame(loop)
+  stats.begin()
   updateSparks()
   renderer.render(stage)
+  stats.end()
+  requestAnimationFrame(loop)
 }
 loop()
 
