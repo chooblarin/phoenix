@@ -17,6 +17,10 @@ class Particle {
     this.acc.y += f.y / this.mass
   }
 
+  applyGravity(g) {
+    this.acc.y += g
+  }
+
   isAlive() {
     return 0 < this.life
   }

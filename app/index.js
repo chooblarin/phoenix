@@ -17,6 +17,7 @@ document.body.appendChild(renderer.view)
 
 const updateSparks = () => {
   for (let s of sparks) {
+    s.applyGravity(0.01)
     s.update()
   }
 
@@ -65,19 +66,30 @@ const spawnSpark = (pos, vel) => {
   sparks.push(spark)
 }
 
-const explode = (pos) => {
-  const steps = 50
-  const radius = 1
-  for (let i = 0; i < steps; i++) {
-    const vx = radius * Math.cos(2 * Math.PI * i / steps)
-    const vy = radius * Math.sin(2 * Math.PI * i / steps)
-    const vel = {
-      x: vx,
-      y: vy
+const createVelocityVector = (mag = 1.0) => {
+    let vx = Math.random() * 2 - 1
+    let vy = Math.random() * 2 - 1
+
+    const tmy = Math.sqrt(1 - vx * vx)
+    if (tmy < Math.abs(vy)) {
+      vy = 0 < vy ? tmy : -tmy
     }
+    return {x: mag * vx, y: mag * vy}
+}
+
+const explode = (pos) => {
+  const steps = 300
+  for (let i = 0; i < steps; i++) {
+    const vel = createVelocityVector(2.0)
     spawnSpark(pos, vel)
   }
 }
+
+window.addEventListener('resize', () => {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  renderer.resize(w, h)
+})
 
 window.addEventListener('click', e => {
   const pos = {
