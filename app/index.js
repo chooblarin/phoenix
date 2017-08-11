@@ -1,14 +1,14 @@
 import 'pixi.js'
 import Stats from 'stats.js'
 
-import Particle from './graphic/Particle'
+import Spark from './graphic/Spark'
 import styles from './styles/main.css'
 
 let width = window.innerWidth
 let height = window.innerHeight
 
 const renderer = PIXI.autoDetectRenderer(width, height, {
-  transparent: true
+  transparent: false
 })
 const stage = new PIXI.Container()
 
@@ -61,10 +61,11 @@ const createCircleSprite = (pos, size = 1) => {
 }
 
 const createSpark = (pos, vel) => {
-  const sprite = createCircleSprite(pos)
+  const size = 1 + Math.random()
+  const sprite = createCircleSprite(pos, size)
   sprite.position.x = pos.x
   sprite.position.y = pos.y
-  return new Particle(sprite, vel)
+  return new Spark(sprite, vel)
 }
 
 const spawnSpark = (pos, vel) => {

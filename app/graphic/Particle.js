@@ -2,12 +2,18 @@ class Particle {
 
   constructor(sprite, vel) {
     this.sprite = sprite
-    this.vel = vel || {x: 0, y: 0}
-    this.acc = {x: 0, y: 0}
+    this.vel = vel || {
+      x: 0,
+      y: 0
+    }
+    this.acc = {
+      x: 0,
+      y: 0
+    }
 
     this.mass = 1.0
 
-    const life = 100
+    const life = Math.floor(Math.random() * 20) + 80
     this.life = life
     this.maxLife = life
   }
@@ -35,7 +41,7 @@ class Particle {
     this.vel.y += this.acc.y
 
     this.sprite.position.x += this.vel.x
-    this.sprite.position.y += this.vel.y 
+    this.sprite.position.y += this.vel.y
 
     // this.vel.x *= this.decayRate
     // this.vel.y *= this.decayRate
@@ -43,8 +49,18 @@ class Particle {
     this.acc.x = 0
     this.acc.y = 0
 
-    this.sprite.alpha -= 0.01
+    if (this.maxLife / 2.0 < this.life) {
+      this.sprite.alpha -= 0.01
+    }
     this.life -= 1
+  }
+
+  reset(pos, vel) {
+    this.pos = pos
+    this.vel = vel
+    const life = 100
+    this.life = life
+    this.maxLife = life
   }
 }
 
