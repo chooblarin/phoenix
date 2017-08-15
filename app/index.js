@@ -7,14 +7,25 @@ import styles from './styles/main.css'
 let width = window.innerWidth
 let height = window.innerHeight
 
-const renderer = PIXI.autoDetectRenderer(width, height, {
+const app = new PIXI.Application({
+  width,
+  height,
   transparent: false
 })
-const stage = new PIXI.Container()
+
+document.body.appendChild(app.renderer.view)
+
+const fireworkContainer = new PIXI.particles.ParticleContainer(10000, {
+  scale: false,
+  position: true,
+  rotation: false,
+  uvs: false,
+  alpha: true
+})
+
+app.stage.addChild(fireworkContainer)
 
 let sparks = []
-
-document.body.appendChild(renderer.view)
 
 const updateSparks = () => {
   for (let s of sparks) {
@@ -29,7 +40,7 @@ const updateSparks = () => {
       sparks[j] = spark
       j += 1
     } else {
-      stage.removeChild(spark.sprite)
+      fireworkContainer.removeChild(spark.sprite)
       spark.sprite.destroy()
     }
   }
@@ -39,15 +50,6 @@ const updateSparks = () => {
 const stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
-
-const loop = () => {
-  stats.begin()
-  updateSparks()
-  renderer.render(stage)
-  stats.end()
-  requestAnimationFrame(loop)
-}
-loop()
 
 const createCircleSprite = (pos, size = 1) => {
   const graphic = new PIXI.Graphics()
@@ -70,19 +72,21 @@ const createSpark = (pos, vel) => {
 
 const spawnSpark = (pos, vel) => {
   const spark = createSpark(pos, vel)
-  stage.addChild(spark.sprite)
+  fireworkContainer.addChild(spark.sprite)
   sparks.push(spark)
 }
 
 const createVelocityVector = (mag = 1.0) => {
-    let vx = Math.random() * 2 - 1
-    let vy = Math.random() * 2 - 1
-
-    const tmy = Math.sqrt(1 - vx * vx)
-    if (tmy < Math.abs(vy)) {
-      vy = 0 < vy ? tmy : -tmy
-    }
-    return {x: mag * vx, y: mag * vy}
+  const vx = Math.random() * 2 - 1
+  let vy = Math.random() * 2 - 1
+  const tmy = Math.sqrt(1 - vx * vx)
+  if (tmy < Math.abs(vy)) {
+    vy = 0 < vy ? tmy : -tmy
+  }
+  return {
+    x: mag * vx,
+    y: mag * vy
+  }
 }
 
 const explode = (pos) => {
@@ -93,10 +97,16 @@ const explode = (pos) => {
   }
 }
 
+app.ticker.add(delta => {
+  stats.begin()
+  updateSparks()
+  stats.end()
+})
+
 window.addEventListener('resize', () => {
   const w = window.innerWidth
   const h = window.innerHeight
-  renderer.resize(w, h)
+  app.renderer.resize(w, h)
 })
 
 window.addEventListener('click', e => {
