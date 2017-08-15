@@ -51,13 +51,18 @@ const stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
 
+const graphic = new PIXI.Graphics()
+graphic.beginFill(0xFBCC88, 0.9)
+graphic.lineStyle(0)
+graphic.drawCircle(0.0, 0.0, 10.0)
+graphic.endFill()
+const circleTexture = graphic.generateCanvasTexture()
+
 const createCircleSprite = (pos, size = 1) => {
-  const graphic = new PIXI.Graphics()
-  graphic.beginFill(0xFBCC88, 0.9)
-  graphic.lineStyle(0)
-  graphic.drawCircle(pos.x, pos.y, size)
-  graphic.endFill()
-  const sprite = new PIXI.Sprite(graphic.generateCanvasTexture())
+  const sprite = new PIXI.Sprite(circleTexture)
+  sprite.position.x = pos.x
+  sprite.position.y = pos.y
+  sprite.scale.set(size / 10.0)
   sprite.anchor.set(0.5)
   return sprite
 }
