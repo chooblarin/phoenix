@@ -26,6 +26,10 @@ app.stage.addChild(outputSprite)
 
 document.body.appendChild(app.renderer.view)
 
+const stats = new Stats()
+stats.showPanel(0)
+document.body.appendChild(stats.dom)
+
 const fireworkContainer = new PIXI.particles.ParticleContainer(10000, {
   scale: false,
   position: true,
@@ -57,10 +61,6 @@ const updateSparks = () => {
   }
   sparks.length = j
 }
-
-const stats = new Stats()
-stats.showPanel(0)
-document.body.appendChild(stats.dom)
 
 const graphic = new PIXI.Graphics()
 graphic.beginFill(0xFBDDAA, 0.9)
@@ -133,6 +133,27 @@ window.addEventListener('resize', () => {
   const w = window.innerWidth
   const h = window.innerHeight
   app.renderer.resize(w, h)
+  width = w
+  height = h
+})
+
+window.addEventListener('keydown', e => {
+  if (32 === e.keyCode) {
+    const count = 7
+    const span = width / count
+    const h = height * 0.2
+    for (let i = 0; i < count; i++) {
+      const rand = Math.random()
+      const pos = {
+        x: span * i + (span / 2.0),
+        y: h + 40 * rand
+      }
+      const delay = 600 * rand
+      window.setTimeout(() => {
+        explode(pos)
+      }, delay)
+    }
+  }
 })
 
 window.addEventListener('click', e => {
@@ -140,5 +161,6 @@ window.addEventListener('click', e => {
     x: e.clientX,
     y: e.clientY
   }
+  console.log(pos)
   explode(pos)
 })
