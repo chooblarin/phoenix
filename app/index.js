@@ -12,6 +12,17 @@ const app = new PIXI.Application({
   height,
   transparent: false
 })
+let renderTexture = PIXI.RenderTexture.create(
+  app.renderer.width,
+  app.renderer.height
+)
+let renderTexture2 = PIXI.RenderTexture.create(
+  app.renderer.width,
+  app.renderer.height
+)
+const outputSprite = new PIXI.Sprite(renderTexture)
+outputSprite.alpha = 0.9
+app.stage.addChild(outputSprite)
 
 document.body.appendChild(app.renderer.view)
 
@@ -29,7 +40,7 @@ let sparks = []
 
 const updateSparks = () => {
   for (let s of sparks) {
-    s.applyGravity(0.01)
+    s.applyGravity(0.015)
     s.update()
   }
 
@@ -52,7 +63,7 @@ stats.showPanel(0)
 document.body.appendChild(stats.dom)
 
 const graphic = new PIXI.Graphics()
-graphic.beginFill(0xFBCC88, 0.9)
+graphic.beginFill(0xFBDDAA, 0.9)
 graphic.lineStyle(0)
 graphic.drawCircle(0.0, 0.0, 10.0)
 graphic.endFill()
@@ -62,7 +73,7 @@ const createCircleSprite = (pos, size = 1) => {
   const sprite = new PIXI.Sprite(circleTexture)
   sprite.position.x = pos.x
   sprite.position.y = pos.y
-  sprite.scale.set(size / 10.0)
+  sprite.scale.set(size / 20.0)
   sprite.anchor.set(0.5)
   return sprite
 }
@@ -88,23 +99,33 @@ const createVelocityVector = (mag = 1.0) => {
   if (tmy < Math.abs(vy)) {
     vy = 0 < vy ? tmy : -tmy
   }
+  const noise = 0.2 * Math.random()
   return {
     x: mag * vx,
-    y: mag * vy
+    y: mag * vy + noise
   }
 }
 
 const explode = (pos) => {
-  const steps = 300
+  const steps = 400
   for (let i = 0; i < steps; i++) {
-    const vel = createVelocityVector(2.0)
+    const vel = createVelocityVector(1.0)
     spawnSpark(pos, vel)
   }
 }
 
 app.ticker.add(delta => {
   stats.begin()
+
   updateSparks()
+
+  // swap the buffers
+  const temp = renderTexture
+  renderTexture = renderTexture2
+  renderTexture2 = temp
+  outputSprite.texture = renderTexture
+  app.renderer.render(app.stage, renderTexture2)
+
   stats.end()
 })
 
