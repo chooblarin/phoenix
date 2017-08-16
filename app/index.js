@@ -131,6 +131,27 @@ const explode = (pos) => {
   }
 }
 
+const launch = (width, count) => {
+  const span = width / count
+  const destY = 0.3 * height
+  const vel = {
+    x: 0.0,
+    y: -1.8
+  }
+  for (let i = 0; i < count; i++) {
+    const rand = Math.random()
+    const pos = {
+      x: span * i + (span / 2.0),
+      y: height
+    }
+    const delay = 600 * rand
+    window.setTimeout(() => {
+      const seed = createFireSeed(app.stage, circleTexture, pos, vel, destY)
+      seeds.push(seed)
+    }, delay)
+  }
+}
+
 const center = {
   x: app.renderer.width / 2.0,
   y: app.renderer.height / 2.0
@@ -157,6 +178,10 @@ app.ticker.add(delta => {
   stats.end()
 })
 
+setInterval(() => {
+  launch(width, 7)
+}, 3000)
+
 window.addEventListener('resize', () => {
   const w = window.innerWidth
   const h = window.innerHeight
@@ -168,24 +193,7 @@ window.addEventListener('resize', () => {
 window.addEventListener('keydown', e => {
   if (32 === e.keyCode) {
     const count = 7
-    const span = width / count
-    const destY = 0.3 * height
-    const vel = {
-      x: 0.0,
-      y: -1.8
-    }
-    for (let i = 0; i < count; i++) {
-      const rand = Math.random()
-      const pos = {
-        x: span * i + (span / 2.0),
-        y: height
-      }
-      const delay = 600 * rand
-      window.setTimeout(() => {
-        const seed = createFireSeed(app.stage, circleTexture, pos, vel, destY)
-        seeds.push(seed)
-      }, delay)
-    }
+    launch(width, count)
   }
 })
 
