@@ -52,6 +52,8 @@ const updateSeeds = (delta) => {
     const seed = seeds[i]
     if (!seed.isAlive()) {
       seeds.splice(i, 1)
+      const pos = seed.getPos()
+      explode(pos)
       seed.destroy()
     }
   }
@@ -150,7 +152,7 @@ app.ticker.add(delta => {
   renderTexture = renderTexture2
   renderTexture2 = temp
   outputSprite.texture = renderTexture
-  app.renderer.render(app.stage, renderTexture2)
+  app.renderer.render(fireworkContainer, renderTexture2)
 
   stats.end()
 })
@@ -167,16 +169,21 @@ window.addEventListener('keydown', e => {
   if (32 === e.keyCode) {
     const count = 7
     const span = width / count
-    const h = height * 0.2
+    const destY = 0.3 * height
+    const vel = {
+      x: 0.0,
+      y: -1.8
+    }
     for (let i = 0; i < count; i++) {
       const rand = Math.random()
       const pos = {
         x: span * i + (span / 2.0),
-        y: h + 40 * rand
+        y: height
       }
       const delay = 600 * rand
       window.setTimeout(() => {
-        explode(pos)
+        const seed = createFireSeed(app.stage, circleTexture, pos, vel, destY)
+        seeds.push(seed)
       }, delay)
     }
   }
@@ -185,13 +192,7 @@ window.addEventListener('keydown', e => {
 window.addEventListener('click', e => {
   const pos = {
     x: e.clientX,
-    y: height
+    y: e.clientY
   }
-  const vel = {
-    x: 0.0,
-    y: -1.6
-  }
-  const destY = 0.4 * height
-  const fireSeed = createFireSeed(app.stage, circleTexture, pos, vel, destY)
-  seeds.push(fireSeed)
+  explode(pos)
 })

@@ -32,6 +32,13 @@ class FireSeed {
   isAlive() {
     return this._isAlive
   }
+
+  getPos() {
+    return {
+      x: this.emitter.ownerPos.x,
+      y: this.emitter.ownerPos.y
+    }
+  }
 }
 
 const emitterOption = {
