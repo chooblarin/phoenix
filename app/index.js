@@ -2,6 +2,7 @@ import 'pixi.js'
 import Stats from 'stats.js'
 
 import Spark from './graphic/Spark'
+import createFireSeed from './graphic/FireSeed'
 import styles from './styles/main.css'
 
 let width = window.innerWidth
@@ -40,7 +41,21 @@ const fireworkContainer = new PIXI.particles.ParticleContainer(10000, {
 
 app.stage.addChild(fireworkContainer)
 
+let seeds = []
 let sparks = []
+
+const updateSeeds = (delta) => {
+  for (let s of seeds) {
+    s.update(delta)
+  }
+  for (let i = seeds.length - 1; 0 <= i; i--) {
+    const seed = seeds[i]
+    if (!seed.isAlive()) {
+      seeds.splice(i, 1)
+      seed.destroy()
+    }
+  }
+}
 
 const updateSparks = () => {
   for (let s of sparks) {
@@ -114,8 +129,19 @@ const explode = (pos) => {
   }
 }
 
+const center = {
+  x: app.renderer.width / 2.0,
+  y: app.renderer.height / 2.0
+}
+
+let elapsed = Date.now()
+
 app.ticker.add(delta => {
   stats.begin()
+
+  const now = Date.now()
+  updateSeeds((now - elapsed) * 0.001)
+  elapsed = now
 
   updateSparks()
 
@@ -159,8 +185,13 @@ window.addEventListener('keydown', e => {
 window.addEventListener('click', e => {
   const pos = {
     x: e.clientX,
-    y: e.clientY
+    y: height
   }
-  console.log(pos)
-  explode(pos)
+  const vel = {
+    x: 0.0,
+    y: -1.6
+  }
+  const destY = 0.4 * height
+  const fireSeed = createFireSeed(app.stage, circleTexture, pos, vel, destY)
+  seeds.push(fireSeed)
 })

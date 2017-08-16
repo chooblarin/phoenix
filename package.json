@@ -12,6 +12,7 @@
   "author": "chooblarin",
   "license": "MIT",
   "dependencies": {
+    "pixi-particles": "^2.1.5",
     "pixi.js": "^4.5.3",
     "stats.js": "^0.17.0"
   },
